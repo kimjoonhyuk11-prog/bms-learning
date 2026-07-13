@@ -87,6 +87,10 @@ input[type=range]{width:100%;accent-color:#1D9E75}
 .ps-num{width:24px;height:24px;border-radius:50%;background:#f0f0e8;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#666;margin-top:2px}
 .ps-text{line-height:1.7;color:#555}
 .ps-text strong{color:#1a1a1a;font-weight:600}
+.fig{margin:1rem 0;background:#fff;border:1px solid #e8e8e0;border-radius:12px;padding:12px;text-align:center}
+.fig img{max-width:100%;height:auto;border-radius:6px;display:block;margin:0 auto}
+.fig figcaption{font-size:11px;color:#888;margin-top:8px;letter-spacing:.02em}
+.fig-ph{background:#f8f8f5;border:1.5px dashed #ccc;border-radius:8px;padding:2.5rem 1rem;color:#aaa;font-size:12px}
 </style>
 </head>
 <body>
@@ -103,6 +107,7 @@ input[type=range]{width:100%;accent-color:#1D9E75}
   <button class="tab" onclick="switchTab('components',this)">부품 목록</button>
   <button class="tab" onclick="switchTab('sim',this)">동작 시뮬레이터</button>
   <button class="tab" onclick="switchTab('how',this)">단계별 원리</button>
+  <button class="tab" onclick="switchTab('calc',this)">수식 계산</button>
   <button class="tab" onclick="switchTab('proto',this)">조립 가이드</button>
 </div>
 
@@ -171,6 +176,48 @@ input[type=range]{width:100%;accent-color:#1D9E75}
 <!-- SIMULATOR -->
 <div id="panel-sim" class="panel">
   <p style="font-size:13px;color:#777;margin-bottom:1rem">슬라이더로 각 셀의 전압을 조절해보세요. 4.2V 도달 시 바이패스 회로가 작동합니다.</p>
+  <div class="fig">
+    <svg viewBox="0 0 640 240" width="100%" style="max-width:600px" xmlns="http://www.w3.org/2000/svg">
+      <text x="320" y="24" font="700 14px sans-serif" fill="#1a1a1a" text-anchor="middle">셀 밸런싱이 없으면? — 직렬 충전의 위험</text>
+
+      <!-- without balancing -->
+      <text x="160" y="52" font="600 12px sans-serif" fill="#E24B4A" text-anchor="middle">밸런싱 없음 (위험)</text>
+      <!-- cell 1 -->
+      <rect x="55" y="70" width="40" height="72" rx="4" fill="#fff" stroke="#ccc"/>
+      <rect x="55" y="120" width="40" height="22" fill="#f59e0b"/>
+      <text x="75" y="158" font="11px sans-serif" fill="#333" text-anchor="middle">55%</text>
+      <!-- cell 2 -->
+      <rect x="140" y="70" width="40" height="72" rx="4" fill="#fff" stroke="#ccc"/>
+      <rect x="140" y="82" width="40" height="60" fill="#43d477"/>
+      <text x="160" y="64" font="700 12px sans-serif" fill="#E24B4A" text-anchor="middle">⚠</text>
+      <text x="160" y="158" font="10px sans-serif" fill="#333" text-anchor="middle">90%→110%</text>
+      <!-- cell 3 -->
+      <rect x="225" y="70" width="40" height="72" rx="4" fill="#fff" stroke="#ccc"/>
+      <rect x="225" y="90" width="40" height="52" fill="#43d477"/>
+      <text x="245" y="64" font="700 12px sans-serif" fill="#E24B4A" text-anchor="middle">⚠</text>
+      <text x="245" y="158" font="10px sans-serif" fill="#333" text-anchor="middle">79%→109%</text>
+      <text x="160" y="184" font="10px sans-serif" fill="#E24B4A" text-anchor="middle">이미 찬 셀이 먼저 과충전</text>
+      <text x="160" y="200" font="10px sans-serif" fill="#E24B4A" text-anchor="middle">→ 열폭주 위험</text>
+
+      <!-- divider -->
+      <line x1="320" y1="50" x2="320" y2="205" stroke="#eee" stroke-width="1"/>
+
+      <!-- with balancing -->
+      <text x="480" y="52" font="600 12px sans-serif" fill="#1D9E75" text-anchor="middle">밸런싱 있음 (안전)</text>
+      <rect x="390" y="70" width="40" height="72" rx="4" fill="#fff" stroke="#ccc"/>
+      <rect x="390" y="76" width="40" height="66" fill="#43d477"/>
+      <text x="410" y="158" font="11px sans-serif" fill="#333" text-anchor="middle">100%</text>
+      <rect x="460" y="70" width="40" height="72" rx="4" fill="#fff" stroke="#ccc"/>
+      <rect x="460" y="76" width="40" height="66" fill="#43d477"/>
+      <text x="480" y="158" font="11px sans-serif" fill="#333" text-anchor="middle">100%</text>
+      <rect x="530" y="70" width="40" height="72" rx="4" fill="#fff" stroke="#ccc"/>
+      <rect x="530" y="76" width="40" height="66" fill="#43d477"/>
+      <text x="550" y="158" font="11px sans-serif" fill="#333" text-anchor="middle">100%</text>
+      <text x="480" y="184" font="10px sans-serif" fill="#1D9E75" text-anchor="middle">먼저 찬 셀은 4.2V에서 바이패스</text>
+      <text x="480" y="200" font="10px sans-serif" fill="#1D9E75" text-anchor="middle">→ 모두 안전하게 만충</text>
+    </svg>
+    <figcaption>셀마다 보호회로가 있어야 특정 셀의 과충전을 막을 수 있다</figcaption>
+  </div>
   <div class="sim-layout">
     <div class="cell-block">
       <div class="cell-header"><span class="cell-label">셀 1 (Cell 1)</span><span class="cell-status st-ok" id="s1-status">충전 중</span></div>
@@ -213,6 +260,144 @@ input[type=range]{width:100%;accent-color:#1D9E75}
     <button class="btn" onclick="prevStep()">← 이전</button>
     <span id="step-counter" style="font-size:12px;color:#888"></span>
     <button class="btn btn-primary" onclick="nextStep()">다음 →</button>
+  </div>
+</div>
+
+<!-- CALC -->
+<div id="panel-calc" class="panel">
+  <p style="font-size:13px;color:#777;margin-bottom:1.25rem">저항값을 직접 바꿔보며 완충 전압과 충전 전압·전류가 어떻게 결정되는지 계산해 보세요.</p>
+
+  <!-- TL431 calculator -->
+  <div class="cell-block" style="margin-bottom:1.25rem">
+    <div class="cell-header"><span class="cell-label">① TL431 완충 전압 계산</span><span class="cell-status st-ok" id="tl-badge">4.17 V</span></div>
+    <div class="fig" style="margin:.5rem 0 .9rem">
+      <svg viewBox="0 0 640 220" width="100%" style="max-width:560px" xmlns="http://www.w3.org/2000/svg">
+        <!-- divider network -->
+        <line x1="60" y1="30" x2="60" y2="190" stroke="#555" stroke-width="1.5"/>
+        <text x="30" y="34" font="12px sans-serif" fill="#333">Input</text>
+        <!-- R1 -->
+        <rect x="48" y="55" width="24" height="40" fill="none" stroke="#333" stroke-width="1.5"/>
+        <text x="82" y="80" font="600 12px sans-serif" fill="#534AB7">R1 20k</text>
+        <!-- node A (Vka) -->
+        <circle cx="60" cy="30" r="3" fill="#333"/>
+        <text x="70" y="26" font="12px sans-serif" fill="#333">V<tspan baseline-shift="sub" font-size="9">KA</tspan></text>
+        <!-- R2 (R3) -->
+        <rect x="48" y="105" width="24" height="40" fill="none" stroke="#333" stroke-width="1.5"/>
+        <text x="82" y="122" font="600 12px sans-serif" fill="#1D9E75">R3 20k</text>
+        <!-- ref tap -->
+        <circle cx="60" cy="100" r="3" fill="#333"/>
+        <line x1="60" y1="100" x2="150" y2="100" stroke="#555" stroke-width="1.5"/>
+        <text x="95" y="94" font="11px sans-serif" fill="#888">REF</text>
+        <!-- R4 variable -->
+        <rect x="48" y="150" width="24" height="34" fill="none" stroke="#854F0B" stroke-width="1.5"/>
+        <line x1="42" y1="185" x2="78" y2="150" stroke="#854F0B" stroke-width="1.2"/>
+        <polygon points="74,152 80,148 78,156" fill="#854F0B"/>
+        <text x="82" y="172" font="600 12px sans-serif" fill="#854F0B">R4 가변</text>
+        <line x1="60" y1="190" x2="180" y2="190" stroke="#555" stroke-width="1.5"/>
+        <!-- GND -->
+        <line x1="120" y1="190" x2="120" y2="200" stroke="#555" stroke-width="1.5"/>
+        <line x1="112" y1="200" x2="128" y2="200" stroke="#555" stroke-width="1.5"/>
+        <line x1="115" y1="204" x2="125" y2="204" stroke="#555" stroke-width="1.2"/>
+
+        <!-- TL431 symbol -->
+        <rect x="150" y="80" width="40" height="40" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.5" rx="3"/>
+        <text x="170" y="104" font="600 11px sans-serif" fill="#26215C" text-anchor="middle">TL431</text>
+        <line x1="170" y1="120" x2="170" y2="190" stroke="#555" stroke-width="1.5"/>
+
+        <!-- pinout label -->
+        <text x="360" y="45" font="700 15px sans-serif" fill="#1a1a1a">TL431 핀 배열</text>
+        <rect x="360" y="60" width="30" height="50" rx="4" fill="#333"/>
+        <line x1="366" y1="110" x2="366" y2="130" stroke="#888" stroke-width="2"/>
+        <line x1="375" y1="110" x2="375" y2="130" stroke="#888" stroke-width="2"/>
+        <line x1="384" y1="110" x2="384" y2="130" stroke="#888" stroke-width="2"/>
+        <text x="410" y="70" font="12px sans-serif" fill="#333">1 &#8212; Ref (기준)</text>
+        <text x="410" y="90" font="12px sans-serif" fill="#333">2 &#8212; Anode (−)</text>
+        <text x="410" y="110" font="12px sans-serif" fill="#333">3 &#8212; Cathode (+)</text>
+        <text x="360" y="150" font="600 13px sans-serif" fill="#534AB7">V</text>
+        <text x="373" y="153" font="9px sans-serif" fill="#534AB7">KA</text>
+        <text x="386" y="150" font="600 13px sans-serif" fill="#333"> = V</text>
+        <text x="415" y="153" font="9px sans-serif" fill="#333">ref</text>
+        <text x="428" y="150" font="600 13px sans-serif" fill="#333"> × (1 + R1 / R2)</text>
+        <text x="360" y="175" font="12px sans-serif" fill="#888">V<tspan baseline-shift="sub" font-size="9">ref</tspan> = 2.5V,&nbsp; R2 = R3 + R4</text>
+      </svg>
+      <figcaption>그림 ① TL431 분압 회로와 핀 배열 — R4를 조절해 완충 전압을 4.2V로 교정</figcaption>
+    </div>
+    <div class="explain-box" style="margin:0 0 .9rem;border-left-color:#534AB7">
+      <strong>공식</strong> &nbsp; V<sub>KA</sub> = V<sub>ref</sub> × (1 + R1 / R2)<br>
+      이 회로에서 &nbsp; <strong>R1 = 20kΩ</strong> (고정), &nbsp; <strong>R2 = R3(20kΩ) + R4(가변)</strong>, &nbsp; V<sub>ref</sub> = 2.5V
+    </div>
+    <div class="slider-wrap">
+      <label>R4 가변저항 : <strong id="r4-val" style="color:#1a1a1a">10.0 kΩ</strong></label>
+      <input type="range" min="0" max="200" value="100" oninput="calcTL(this.value)">
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:#aaa;margin-top:2px"><span>0kΩ</span><span>20kΩ</span></div>
+    </div>
+    <div class="volt-display" style="margin-top:.75rem">V<sub>KA</sub> = <span id="tl-out">4.17</span><span class="volt-unit"> V</span></div>
+    <div class="explain-box" id="tl-explain" style="margin-top:.5rem">
+      계산: V<sub>KA</sub> = 2.5 × (1 + 20 / (20 + 10.0)) = <strong>4.17V</strong> &nbsp;— 리튬이온 완충(4.2V)에 거의 근접했습니다.
+    </div>
+  </div>
+
+  <!-- LM317 voltage calculator -->
+  <div class="cell-block" style="margin-bottom:1.25rem">
+    <div class="cell-header"><span class="cell-label">② LM317 출력 전압 계산 (CV)</span><span class="cell-status st-full" id="lmv-badge">12.6 V</span></div>
+    <div class="fig" style="margin:.5rem 0 .9rem">
+      <svg viewBox="0 0 520 170" width="100%" style="max-width:480px" xmlns="http://www.w3.org/2000/svg">
+        <text x="40" y="30" font="12px sans-serif" fill="#333">V<tspan baseline-shift="sub" font-size="9">in</tspan></text>
+        <line x1="40" y1="45" x2="120" y2="45" stroke="#555" stroke-width="1.5"/>
+        <rect x="120" y="30" width="90" height="40" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.5" rx="3"/>
+        <text x="165" y="55" font="600 13px sans-serif" fill="#042C53" text-anchor="middle">LM317</text>
+        <line x1="210" y1="45" x2="330" y2="45" stroke="#555" stroke-width="1.5"/>
+        <text x="345" y="30" font="12px sans-serif" fill="#333">V<tspan baseline-shift="sub" font-size="9">out</tspan></text>
+        <circle cx="330" cy="45" r="3" fill="#333"/>
+        <!-- R1 -->
+        <rect x="318" y="60" width="24" height="34" fill="none" stroke="#185FA5" stroke-width="1.5"/>
+        <text x="350" y="82" font="600 12px sans-serif" fill="#185FA5">R1 240Ω</text>
+        <!-- ADJ -->
+        <line x1="165" y1="70" x2="165" y2="110" stroke="#555" stroke-width="1.5"/>
+        <text x="130" y="90" font="11px sans-serif" fill="#888">ADJ</text>
+        <line x1="165" y1="110" x2="330" y2="110" stroke="#555" stroke-width="1.5"/>
+        <circle cx="330" cy="110" r="3" fill="#333"/>
+        <line x1="330" y1="94" x2="330" y2="110" stroke="#555" stroke-width="1.5"/>
+        <!-- R2 -->
+        <rect x="318" y="120" width="24" height="34" fill="none" stroke="#854F0B" stroke-width="1.5"/>
+        <line x1="312" y1="154" x2="348" y2="120" stroke="#854F0B" stroke-width="1.2"/>
+        <text x="350" y="142" font="600 12px sans-serif" fill="#854F0B">R2 가변</text>
+        <text x="60" y="140" font="600 13px sans-serif" fill="#333">V</text>
+        <text x="73" y="143" font="9px sans-serif" fill="#333">out</text>
+        <text x="88" y="140" font="600 13px sans-serif" fill="#333"> = 1.25 × (1 + R2 / R1)</text>
+      </svg>
+      <figcaption>그림 ② LM317 전압 조절 회로 — R2를 조절해 3S 만충 전압 12.6V로 설정</figcaption>
+    </div>
+    <div class="explain-box" style="margin:0 0 .9rem;border-left-color:#185FA5">
+      <strong>공식</strong> &nbsp; V<sub>out</sub> = 1.25 × (1 + R2 / R1)<br>
+      이 회로에서 &nbsp; <strong>R1 = 240Ω</strong> (고정), &nbsp; <strong>R2 = 가변</strong> &nbsp; → 3S 팩 만충 목표 12.6V
+    </div>
+    <div class="slider-wrap">
+      <label>R2 저항 : <strong id="lmv-r2" style="color:#1a1a1a">2180 Ω</strong></label>
+      <input type="range" min="200" max="3000" value="2180" oninput="calcLMV(this.value)">
+    </div>
+    <div class="volt-display" style="margin-top:.75rem">V<sub>out</sub> = <span id="lmv-out">12.60</span><span class="volt-unit"> V</span></div>
+    <div class="explain-box" id="lmv-explain" style="margin-top:.5rem">
+      계산: V<sub>out</sub> = 1.25 × (1 + 2180 / 240) = <strong>12.60V</strong> — 3셀 직렬 만충 전압과 일치합니다.
+    </div>
+  </div>
+
+  <!-- LM317 current calculator -->
+  <div class="cell-block">
+    <div class="cell-header"><span class="cell-label">③ LM317 충전 전류 제한 계산 (CC)</span><span class="cell-status st-bypass" id="lmi-badge">600 mA</span></div>
+    <div class="explain-box" style="margin:0 0 .9rem;border-left-color:#854F0B">
+      <strong>공식</strong> &nbsp; I<sub>out</sub> = 1.25 / R<br>
+      이 회로에서 전류 설정 저항 &nbsp; <strong>R18 = 2Ω (1W)</strong> &nbsp; → 약 600mA 정전류 충전
+    </div>
+    <div class="slider-wrap">
+      <label>전류 설정 저항 R : <strong id="lmi-r" style="color:#1a1a1a">2.0 Ω</strong></label>
+      <input type="range" min="10" max="100" value="20" oninput="calcLMI(this.value)">
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:#aaa;margin-top:2px"><span>1.0Ω</span><span>10.0Ω</span></div>
+    </div>
+    <div class="volt-display" style="margin-top:.75rem">I<sub>out</sub> = <span id="lmi-out">625</span><span class="volt-unit"> mA</span></div>
+    <div class="explain-box" id="lmi-explain" style="margin-top:.5rem">
+      계산: I<sub>out</sub> = 1.25 / 2.0 = <strong>0.625A ≈ 625mA</strong> — 저항이 작을수록 충전 전류가 커집니다. (발열 주의: P = I²R)
+    </div>
   </div>
 </div>
 
@@ -315,6 +500,56 @@ function switchTab(id, el) {
   document.getElementById('panel-'+id).classList.add('active');
   el.classList.add('active');
 }
+
+// ── TL431 완충 전압 계산 ──
+// slider 0~200 → R4 0.0~20.0kΩ
+function calcTL(raw){
+  const R4 = parseInt(raw)/10;            // kΩ
+  const R1 = 20, R3 = 20, Vref = 2.5;
+  const R2 = R3 + R4;
+  const Vka = Vref * (1 + R1/R2);
+  document.getElementById('r4-val').textContent = R4.toFixed(1)+' kΩ';
+  document.getElementById('tl-out').textContent = Vka.toFixed(2);
+  document.getElementById('tl-badge').textContent = Vka.toFixed(2)+' V';
+  let note;
+  if (Vka >= 4.15 && Vka <= 4.25) note = '리튬이온 완충(4.2V)에 <strong>정확히 근접</strong>했습니다. 이 지점으로 가변저항을 교정합니다.';
+  else if (Vka > 4.25) note = '완충 전압이 <strong style="color:#E24B4A">4.2V보다 높습니다</strong> — 과충전 위험. R4를 키우세요.';
+  else note = '완충 전압이 4.2V보다 낮습니다 — 셀이 다 충전되기 전에 차단됩니다. R4를 줄이세요.';
+  document.getElementById('tl-explain').innerHTML =
+    '계산: V<sub>KA</sub> = 2.5 × (1 + 20 / (20 + '+R4.toFixed(1)+')) = <strong>'+Vka.toFixed(2)+'V</strong><br>'+note;
+}
+
+// ── LM317 출력 전압 계산 ──
+function calcLMV(raw){
+  const R2 = parseInt(raw), R1 = 240;
+  const Vout = 1.25 * (1 + R2/R1);
+  document.getElementById('lmv-r2').textContent = R2+' Ω';
+  document.getElementById('lmv-out').textContent = Vout.toFixed(2);
+  document.getElementById('lmv-badge').textContent = Vout.toFixed(1)+' V';
+  let note;
+  if (Vout >= 12.4 && Vout <= 12.8) note = '<strong>3S 만충 전압(12.6V)</strong>과 일치합니다.';
+  else if (Vout > 12.8) note = '<strong style="color:#E24B4A">12.6V보다 높습니다</strong> — 과충전 위험. R2를 줄이세요.';
+  else note = '12.6V보다 낮아 셀이 완전히 충전되지 않습니다. R2를 키우세요.';
+  document.getElementById('lmv-explain').innerHTML =
+    '계산: V<sub>out</sub> = 1.25 × (1 + '+R2+' / 240) = <strong>'+Vout.toFixed(2)+'V</strong> — '+note;
+}
+
+// ── LM317 전류 제한 계산 ──
+// slider 10~100 → R 1.0~10.0Ω
+function calcLMI(raw){
+  const R = parseInt(raw)/10;
+  const Iout = 1.25 / R;                   // A
+  const mA = Iout*1000;
+  const P = Iout*Iout*R;                    // 저항 소비전력
+  document.getElementById('lmi-r').textContent = R.toFixed(1)+' Ω';
+  document.getElementById('lmi-out').textContent = Math.round(mA);
+  document.getElementById('lmi-badge').textContent = Math.round(mA)+' mA';
+  document.getElementById('lmi-explain').innerHTML =
+    '계산: I<sub>out</sub> = 1.25 / '+R.toFixed(1)+' = <strong>'+Iout.toFixed(3)+'A ≈ '+Math.round(mA)+'mA</strong><br>'+
+    '저항 소비전력 P = I²R = <strong>'+P.toFixed(2)+'W</strong> (발열 주의 — 저항 정격 W 확인)';
+}
+
+calcTL(100); calcLMV(2180); calcLMI(20);
 </script>
 </body>
 </html>
