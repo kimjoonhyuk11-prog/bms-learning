@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3S BMS 회로 학습자료</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8f8f5;color:#1a1a1a;line-height:1.6}
+.wrap{max-width:860px;margin:0 auto;padding:2rem 1.5rem}
+.top-header{margin-bottom:2rem}
+.badge{background:#1D9E75;color:#fff;font-size:11px;font-weight:600;padding:3px 12px;border-radius:20px;letter-spacing:.05em;display:inline-block;margin-bottom:.5rem}
+h1{font-size:24px;font-weight:600;margin-bottom:4px}
+.subtitle{font-size:14px;color:#666;margin-bottom:0}
+.tabs{display:flex;gap:4px;border-bottom:1.5px solid #e0e0d8;margin-bottom:1.5rem;overflow-x:auto}
+.tab{padding:9px 18px;font-size:13px;font-weight:500;color:#777;cursor:pointer;border:none;background:none;border-bottom:2.5px solid transparent;transition:all .15s;white-space:nowrap}
+.tab:hover{color:#222}
+.tab.active{color:#1a1a1a;border-bottom-color:#1a1a1a}
+.panel{display:none}
+.panel.active{display:block}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.5rem}
+.info-card{background:#fff;border:1px solid #e8e8e0;border-radius:10px;padding:14px 16px}
+.ic-label{font-size:11px;color:#888;margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em}
+.ic-value{font-size:22px;font-weight:600;color:#1a1a1a}
+.ic-sub{font-size:11px;color:#888;margin-top:2px}
+.block-area{margin:1rem 0 1.5rem}
+.block-title{font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:.75rem}
+.block-row{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.block-box{border-radius:8px;padding:10px 14px;font-size:12px;font-weight:600;text-align:center;min-width:90px;border:1.5px solid}
+.bb-green{background:#E1F5EE;border-color:#1D9E75;color:#085041}
+.bb-blue{background:#E6F1FB;border-color:#185FA5;color:#042C53}
+.bb-purple{background:#EEEDFE;border-color:#534AB7;color:#26215C}
+.bb-amber{background:#FAEEDA;border-color:#854F0B;color:#412402}
+.bb-gray{background:#F1EFE8;border-color:#5F5E5A;color:#2C2C2A}
+.arrow-h{font-size:18px;color:#aaa}
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.feature-box{background:#fff;border:1px solid #e8e8e0;border-radius:10px;padding:12px}
+.feature-icon{font-size:20px;margin-bottom:6px}
+.feature-name{font-size:12px;font-weight:600;color:#1a1a1a;margin-bottom:3px}
+.feature-desc{font-size:11px;color:#777;line-height:1.5}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;border:1px solid #e8e8e0}
+th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;color:#777;text-transform:uppercase;letter-spacing:.06em;background:#f8f8f5;border-bottom:1px solid #e8e8e0}
+td{padding:10px 14px;font-size:13px;color:#333;border-bottom:1px solid #f0f0e8}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafafa}
+.chip{display:inline-block;background:#E1F5EE;color:#085041;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;margin-left:4px}
+.sim-layout{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:560px){.sim-layout{grid-template-columns:1fr}}
+.cell-block{background:#fff;border:1px solid #e8e8e0;border-radius:12px;padding:1rem}
+.cell-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem}
+.cell-label{font-size:13px;font-weight:600}
+.cell-status{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+.st-ok{background:#E1F5EE;color:#085041}
+.st-bypass{background:#FAEEDA;color:#412402}
+.st-full{background:#EAF3DE;color:#173404}
+.volt-display{font-size:28px;font-weight:600;margin-bottom:.5rem}
+.volt-unit{font-size:14px;font-weight:400;color:#888}
+.volt-bar-track{background:#f0f0e8;border-radius:4px;height:7px;margin:.5rem 0}
+.volt-bar-fill{height:7px;border-radius:4px;transition:width .3s,background .3s}
+.slider-wrap{margin:.75rem 0 .25rem}
+.slider-wrap label{font-size:11px;color:#888;display:block;margin-bottom:5px}
+input[type=range]{width:100%;accent-color:#1D9E75}
+.led-row{display:flex;align-items:center;gap:6px;font-size:12px;color:#888;margin-top:.5rem}
+.led{width:10px;height:10px;border-radius:50%;background:#ddd;transition:background .3s,box-shadow .3s}
+.led.on{background:#22c55e;box-shadow:0 0 6px #22c55e88}
+.led.bypass{background:#f59e0b;box-shadow:0 0 6px #f59e0b88}
+.charge-total{background:#fff;border:1px solid #e8e8e0;border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+.ct-label{font-size:11px;color:#888;margin-bottom:2px}
+.ct-value{font-size:20px;font-weight:600}
+.explain-box{background:#fff;border:1px solid #e8e8e0;border-radius:10px;padding:13px 15px;margin-top:.75rem;font-size:12px;color:#666;line-height:1.7;border-left:3px solid #1D9E75}
+.explain-box.warn{border-left-color:#E24B4A}
+.step-nav{display:flex;gap:8px;align-items:center;margin-bottom:1rem}
+.step-dot{width:8px;height:8px;border-radius:50%;background:#ddd;cursor:pointer;transition:background .2s}
+.step-dot.active{background:#1a1a1a}
+.step-card{background:#fff;border:1px solid #e8e8e0;border-radius:12px;padding:1.5rem}
+.step-num{font-size:11px;color:#888;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem}
+.step-title{font-size:17px;font-weight:600;margin-bottom:.75rem}
+.step-body{font-size:13px;color:#555;line-height:1.8}
+.step-body strong{color:#1a1a1a;font-weight:600}
+.step-footer{display:flex;justify-content:space-between;align-items:center;margin-top:1rem}
+.btn{padding:8px 18px;font-size:13px;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#fff;color:#333;transition:background .15s;font-weight:500}
+.btn:hover{background:#f5f5f0}
+.btn-primary{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.btn-primary:hover{background:#333}
+.proto-steps{margin-top:.5rem;display:flex;flex-direction:column;gap:10px}
+.proto-step{display:flex;gap:12px;align-items:flex-start;font-size:13px}
+.ps-num{width:24px;height:24px;border-radius:50%;background:#f0f0e8;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#666;margin-top:2px}
+.ps-text{line-height:1.7;color:#555}
+.ps-text strong{color:#1a1a1a;font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="top-header">
+  <span class="badge">3S BMS 회로</span>
+  <h1>리튬이온 배터리 관리 시스템 (BMS) 학습자료</h1>
+  <p class="subtitle">3셀 직렬 과충전 보호 · 셀 밸런싱 · TL431 + BD140 + LM317 회로 분석</p>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('overview',this)">개요</button>
+  <button class="tab" onclick="switchTab('components',this)">부품 목록</button>
+  <button class="tab" onclick="switchTab('sim',this)">동작 시뮬레이터</button>
+  <button class="tab" onclick="switchTab('how',this)">단계별 원리</button>
+  <button class="tab" onclick="switchTab('proto',this)">조립 가이드</button>
+</div>
+
+<!-- OVERVIEW -->
+<div id="panel-overview" class="panel active">
+  <div class="info-grid">
+    <div class="info-card"><div class="ic-label">셀 구성</div><div class="ic-value">3S</div><div class="ic-sub">3셀 직렬 연결</div></div>
+    <div class="info-card"><div class="ic-label">공칭 전압</div><div class="ic-value">11.1V</div><div class="ic-sub">3 × 3.7V</div></div>
+    <div class="info-card"><div class="ic-label">만충 전압</div><div class="ic-value">12.6V</div><div class="ic-sub">3 × 4.2V 컷오프</div></div>
+    <div class="info-card"><div class="ic-label">보호 기능</div><div class="ic-value">4종</div><div class="ic-sub">과충전·단락·밸런싱·전류</div></div>
+  </div>
+
+  <div class="block-area">
+    <div class="block-title">블록 다이어그램 — 신호 흐름</div>
+    <div class="block-row">
+      <div class="block-box bb-blue">충전기 입력<br><span style="font-size:10px">DC 입력</span></div>
+      <span class="arrow-h">→</span>
+      <div class="block-box bb-purple">LM317<br><span style="font-size:10px">전압·전류 조절</span></div>
+      <span class="arrow-h">→</span>
+      <div class="block-box bb-green">BMS 보호 회로<br><span style="font-size:10px">TL431 × 3 + BD140 × 3</span></div>
+    </div>
+    <div style="text-align:center;font-size:18px;color:#aaa;margin:4px 0">↓</div>
+    <div class="block-row">
+      <div class="block-box bb-amber" style="min-width:75px">셀 1<br><span style="font-size:10px">max 4.2V</span></div>
+      <span class="arrow-h" style="font-size:13px">+</span>
+      <div class="block-box bb-amber" style="min-width:75px">셀 2<br><span style="font-size:10px">max 4.2V</span></div>
+      <span class="arrow-h" style="font-size:13px">+</span>
+      <div class="block-box bb-amber" style="min-width:75px">셀 3<br><span style="font-size:10px">max 4.2V</span></div>
+      <span class="arrow-h">→</span>
+      <div class="block-box bb-gray">부하 출력<br><span style="font-size:10px">최대 12.6V</span></div>
+    </div>
+  </div>
+
+  <div class="block-title" style="margin-bottom:.75rem">BMS 핵심 기능</div>
+  <div class="feature-grid">
+    <div class="feature-box"><div class="feature-icon">🔋</div><div class="feature-name">과충전 방지</div><div class="feature-desc">셀 전압 4.2V 도달 시 바이패스 경로 개방하여 추가 충전 차단</div></div>
+    <div class="feature-box"><div class="feature-icon">⚖️</div><div class="feature-name">셀 밸런싱 (패시브)</div><div class="feature-desc">충전 완료된 셀을 우회하여 나머지 셀이 계속 충전되도록 유도</div></div>
+    <div class="feature-box"><div class="feature-icon">⚡</div><div class="feature-name">전류 제한</div><div class="feature-desc">LM317 전류 레귤레이터가 안전한 충전 전류를 일정하게 유지</div></div>
+    <div class="feature-box"><div class="feature-icon">💡</div><div class="feature-name">상태 표시</div><div class="feature-desc">LED로 각 셀의 바이패스(충전 완료) 여부를 시각적으로 표시</div></div>
+  </div>
+</div>
+
+<!-- COMPONENTS -->
+<div id="panel-components" class="panel">
+  <table>
+    <thead>
+      <tr><th>부품명</th><th>수량</th><th>역할 및 핵심 스펙</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>TL431</strong><span class="chip">핵심</span></td><td>3개</td><td>가변 정밀 션트 레귤레이터. 가변저항으로 셀별 컷오프 전압(4.2V) 설정. Vref = 2.495V, 최대 36V</td></tr>
+      <tr><td><strong>BD140</strong><span class="chip">핵심</span></td><td>3개</td><td>PNP 트랜지스터. TL431 신호로 바이패스 전류 경로 스위칭. Ic max 1.5A, TO-126 패키지</td></tr>
+      <tr><td><strong>LM317</strong></td><td>2개</td><td>가변 선형 레귤레이터. 1개는 전압(12.6V) 조절, 1개는 전류 제한용. 1.25~37V, 1.5A</td></tr>
+      <tr><td><strong>1N4007 다이오드</strong></td><td>12개</td><td>바이패스 더미 로드. 과잉 전력을 열로 소산. 4개 직렬 ≈ 2.8V 강하. 1A / 1000V PIV</td></tr>
+      <tr><td><strong>LED (적색 또는 녹색)</strong></td><td>3개</td><td>바이패스 활성화 시 점등 → 셀 충전 완료 상태 표시. 20mA / 순방향 전압 약 2V</td></tr>
+      <tr><td><strong>20kΩ 가변저항</strong></td><td>3개</td><td>TL431 레퍼런스 핀의 분압비 조정 → 셀별 컷오프 전압 미세 교정. 멀티턴 타입 권장</td></tr>
+      <tr><td><strong>저항 다수 (1kΩ, 240Ω 등)</strong></td><td>여러 개</td><td>TL431 분압기, LED 전류 제한, LM317 출력 전압·전류 설정용</td></tr>
+      <tr><td><strong>방열판 (Heat Sink)</strong></td><td>3~5개</td><td>BD140·1N4007·LM317 열 방출. 바이패스 시 열 발생이 크므로 필수. TO-126/TO-220 호환</td></tr>
+    </tbody>
+  </table>
+  <div class="explain-box" style="margin-top:1rem">
+    <strong>왜 TL431 + BD140 조합인가?</strong><br>
+    TL431의 레퍼런스 핀 전압이 기준값(2.495V)에 도달하면 카소드-애노드 간 임피던스가 낮아집니다. 이 변화를 감지해 BD140 베이스에 전류가 흘러 트랜지스터가 ON 상태로 전환됩니다. 이후 1N4007 체인을 통한 바이패스 경로가 열려 해당 셀의 과충전이 차단됩니다.
+  </div>
+</div>
+
+<!-- SIMULATOR -->
+<div id="panel-sim" class="panel">
+  <p style="font-size:13px;color:#777;margin-bottom:1rem">슬라이더로 각 셀의 전압을 조절해보세요. 4.2V 도달 시 바이패스 회로가 작동합니다.</p>
+  <div class="sim-layout">
+    <div class="cell-block">
+      <div class="cell-header"><span class="cell-label">셀 1 (Cell 1)</span><span class="cell-status st-ok" id="s1-status">충전 중</span></div>
+      <div class="volt-display"><span id="v1-display">3.70</span><span class="volt-unit"> V</span></div>
+      <div class="volt-bar-track"><div class="volt-bar-fill" id="bar1" style="width:70%;background:#1D9E75"></div></div>
+      <div class="slider-wrap"><label>전압 조절 (2.5V — 4.2V)</label><input type="range" min="250" max="420" value="370" oninput="updateCell(1,this.value)"></div>
+      <div class="led-row"><div class="led" id="led1"></div><span>바이패스 LED</span><span id="led1-text" style="margin-left:auto;font-size:11px">대기</span></div>
+    </div>
+    <div class="cell-block">
+      <div class="cell-header"><span class="cell-label">셀 2 (Cell 2)</span><span class="cell-status st-ok" id="s2-status">충전 중</span></div>
+      <div class="volt-display"><span id="v2-display">3.70</span><span class="volt-unit"> V</span></div>
+      <div class="volt-bar-track"><div class="volt-bar-fill" id="bar2" style="width:70%;background:#1D9E75"></div></div>
+      <div class="slider-wrap"><label>전압 조절 (2.5V — 4.2V)</label><input type="range" min="250" max="420" value="370" oninput="updateCell(2,this.value)"></div>
+      <div class="led-row"><div class="led" id="led2"></div><span>바이패스 LED</span><span id="led2-text" style="margin-left:auto;font-size:11px">대기</span></div>
+    </div>
+    <div class="cell-block">
+      <div class="cell-header"><span class="cell-label">셀 3 (Cell 3)</span><span class="cell-status st-ok" id="s3-status">충전 중</span></div>
+      <div class="volt-display"><span id="v3-display">3.70</span><span class="volt-unit"> V</span></div>
+      <div class="volt-bar-track"><div class="volt-bar-fill" id="bar3" style="width:70%;background:#1D9E75"></div></div>
+      <div class="slider-wrap"><label>전압 조절 (2.5V — 4.2V)</label><input type="range" min="250" max="420" value="370" oninput="updateCell(3,this.value)"></div>
+      <div class="led-row"><div class="led" id="led3"></div><span>바이패스 LED</span><span id="led3-text" style="margin-left:auto;font-size:11px">대기</span></div>
+    </div>
+    <div>
+      <div class="charge-total">
+        <div><div class="ct-label">총 팩 전압</div><div class="ct-value" id="total-v">11.10 V</div></div>
+        <div style="text-align:right"><div class="ct-label">충전 상태 (SoC)</div><div class="ct-value" id="pack-pct">50%</div></div>
+      </div>
+      <div class="explain-box" id="sim-explain" style="margin-top:.75rem">
+        슬라이더로 셀 전압을 변경해보세요. 4.2V에 도달하면 바이패스 회로가 활성화됩니다.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW -->
+<div id="panel-how" class="panel">
+  <div class="step-nav" id="step-nav"></div>
+  <div id="step-card" class="step-card"></div>
+  <div class="step-footer">
+    <button class="btn" onclick="prevStep()">← 이전</button>
+    <span id="step-counter" style="font-size:12px;color:#888"></span>
+    <button class="btn btn-primary" onclick="nextStep()">다음 →</button>
+  </div>
+</div>
+
+<!-- PROTO -->
+<div id="panel-proto" class="panel">
+  <p style="font-size:13px;color:#777;margin-bottom:1rem">3S BMS 회로 조립 순서와 교정(캘리브레이션) 절차입니다.</p>
+  <div class="proto-steps">
+    <div class="proto-step"><div class="ps-num">1</div><div class="ps-text"><strong>1S 단위 회로 먼저 제작</strong> — TL431 + BD140 + 1N4007×4 + LED + 20kΩ 가변저항으로 단일 셀 보호 회로를 브레드보드에 구성합니다.</div></div>
+    <div class="proto-step"><div class="ps-num">2</div><div class="ps-text"><strong>TL431 컷오프 전압 교정</strong> — 정밀 전원공급기로 입력 전압을 천천히 올리며 LED가 정확히 4.20V에서 켜지도록 가변저항을 조정합니다. (멀티미터 필수)</div></div>
+    <div class="proto-step"><div class="ps-num">3</div><div class="ps-text"><strong>동일 회로 3개 제작 및 개별 교정</strong> — 셀2·셀3 회로도 같은 방법으로 제작하고 각각 독립적으로 4.2V 컷오프를 교정합니다.</div></div>
+    <div class="proto-step"><div class="ps-num">4</div><div class="ps-text"><strong>LM317 전압 조절기 구성</strong> — 출력 12.6V 설정: R1 = 240Ω, R2 ≈ 2.16kΩ. 실제 부품 오차에 맞게 가변저항으로 미세 조정합니다.</div></div>
+    <div class="proto-step"><div class="ps-num">5</div><div class="ps-text"><strong>LM317 전류 제한 설정</strong> — 두 번째 LM317을 정전류 회로로 구성합니다. 공식: <strong>R = 1.25 / I_charge</strong> (예: 500mA → 2.5Ω)</div></div>
+    <div class="proto-step"><div class="ps-num">6</div><div class="ps-text"><strong>3S 직렬 통합 연결</strong> — 3개의 1S 보호 회로를 직렬 배터리 팩에 병렬로 연결합니다. 각 셀의 +/- 탭 극성을 반드시 확인합니다.</div></div>
+    <div class="proto-step"><div class="ps-num">7</div><div class="ps-text"><strong>방열판 부착</strong> — BD140, 더미 로드용 1N4007, LM317에 방열판을 부착합니다. 바이패스 동작 시 열 발생이 크므로 필수입니다.</div></div>
+    <div class="proto-step"><div class="ps-num">8</div><div class="ps-text"><strong>밸런싱 동작 테스트</strong> — 셀1만 4.2V로 충전된 상황에서 셀1 LED만 켜지고 셀2·셀3는 계속 충전되는지 확인합니다.</div></div>
+    <div class="proto-step"><div class="ps-num">9</div><div class="ps-text"><strong>열 확인 (Thermal Check)</strong> — 30분 충전 후 BD140·다이오드 온도 측정. 60°C 초과 시 방열판 면적을 늘리거나 충전 전류를 낮춥니다.</div></div>
+  </div>
+  <div class="explain-box warn" style="margin-top:1.25rem">
+    ⚠️ <strong>안전 주의사항</strong><br>
+    리튬이온 배터리 작업 시 단락(쇼트)에 각별히 주의하세요. 배터리와 회로 연결 전 항상 전압을 측정하고, 출력 라인에 퓨즈(1~2A)를 추가하는 것을 권장합니다. 충전 중 자리를 비우지 마세요.
+  </div>
+</div>
+
+</div>
+
+<script>
+const cells = {1:{v:370},2:{v:370},3:{v:370}};
+
+function updateCell(n, raw) {
+  const v = parseInt(raw);
+  cells[n].v = v;
+  const vf = (v/100).toFixed(2);
+  document.getElementById('v'+n+'-display').textContent = vf;
+  const pct = ((v-250)/(420-250)*100).toFixed(0);
+  const bar = document.getElementById('bar'+n);
+  bar.style.width = pct+'%';
+  const isBypass = v >= 420;
+  const isNear = v >= 415;
+  const led = document.getElementById('led'+n);
+  const ledT = document.getElementById('led'+n+'-text');
+  const status = document.getElementById('s'+n+'-status');
+  if (isBypass) {
+    bar.style.background='#f59e0b';
+    led.className='led bypass';
+    ledT.textContent='바이패스 ON';
+    status.textContent='바이패스 중';
+    status.className='cell-status st-bypass';
+  } else if (isNear) {
+    bar.style.background='#639922';
+    led.className='led on';
+    ledT.textContent='완충 근접';
+    status.textContent='완충 근접';
+    status.className='cell-status st-full';
+  } else {
+    bar.style.background='#1D9E75';
+    led.className='led';
+    ledT.textContent='대기';
+    status.textContent='충전 중';
+    status.className='cell-status st-ok';
+  }
+  const total = (cells[1].v + cells[2].v + cells[3].v)/100;
+  document.getElementById('total-v').textContent = total.toFixed(2)+' V';
+  const packPct = Math.round(((total - 7.5)/(12.6-7.5))*100);
+  document.getElementById('pack-pct').textContent = Math.max(0,Math.min(100,packPct))+'%';
+  const bypassed = [1,2,3].filter(i => cells[i].v >= 420);
+  const ex = document.getElementById('sim-explain');
+  if (bypassed.length === 0) {
+    ex.innerHTML = '3셀 모두 정상 충전 중입니다. TL431이 각 셀 전압을 실시간 모니터링하고 있습니다.';
+  } else if (bypassed.length === 3) {
+    ex.innerHTML = '🎉 <strong>3셀 모두 만충 완료!</strong> 모든 바이패스 회로가 활성화되었습니다. 충전기를 분리하세요.';
+  } else {
+    ex.innerHTML = '셀 '+bypassed.join(', ')+' 이(가) 4.2V 도달 → <strong>TL431 ON → BD140 트랜지스터 포화</strong> → 1N4007 더미 로드 경로 개방 → 나머지 셀 계속 충전 (셀 밸런싱 진행 중)';
+  }
+}
+
+const steps = [
+  {num:'1 / 5', title:'입력 전압·전류 조절 — LM317 레귤레이터', body:`충전기 전압이 3S 팩에 직접 인가되면 과충전이 됩니다. <strong>LM317 전압 레귤레이터</strong>가 먼저 입력 전압을 <strong>12.6V로 안정화</strong>합니다.<br><br>두 번째 LM317은 <strong>정전류(CC) 모드</strong>로 동작하여 충전 전류를 안전한 값으로 제한합니다.<br><br>전류 설정 공식: <strong>R = 1.25 / I_charge</strong><br>예) 500mA 충전: R = 1.25 ÷ 0.5 = <strong>2.5Ω</strong>`},
+  {num:'2 / 5', title:'TL431 — 전압 감지 및 컷오프 기준 설정', body:`<strong>TL431</strong>은 정밀 가변 션트 레귤레이터입니다. 내부 밴드갭 레퍼런스 전압은 <strong>2.495V</strong>입니다.<br><br>외부 가변저항(20kΩ)과 고정 저항으로 구성된 분압기가 레퍼런스 핀 전압을 조절합니다. 이를 통해 <strong>셀 컷오프 전압을 4.2V로 정밀 설정</strong>합니다.<br><br>셀 전압 < 4.2V → TL431 OFF → 정상 충전 계속<br>셀 전압 ≥ 4.2V → TL431 ON → BD140 베이스 전류 공급`},
+  {num:'3 / 5', title:'BD140 PNP 트랜지스터 — 바이패스 스위치', body:`TL431이 활성화되면 <strong>BD140 PNP 트랜지스터의 베이스-에미터 간에 전류</strong>가 흐릅니다.<br><br>BD140이 <strong>포화 영역(Saturation)</strong>으로 진입하면 컬렉터-에미터 경로의 저항이 매우 낮아집니다. 충전 전류가 셀을 통과하지 않고 <strong>바이패스 경로(더미 로드)로 우회</strong>합니다.<br><br>결과: 해당 셀에는 추가 충전 전류가 공급되지 않아 <strong>4.2V 초과 충전이 완전 차단</strong>됩니다.`},
+  {num:'4 / 5', title:'1N4007 더미 로드 — 과잉 전력 열 소산', body:`바이패스 경로에는 <strong>1N4007 다이오드 4개가 직렬</strong>로 연결됩니다.<br><br>각 1N4007의 순방향 전압 강하 ≈ 0.7V → 4개 직렬 합계 ≈ <strong>2.8V 전압 강하</strong><br>이 전력이 <strong>열로 소산</strong>되어 바이패스 회로의 더미 로드 역할을 합니다.<br><br>⚠️ 바이패스 동작 중 BD140·1N4007 발열이 상당합니다. <strong>방열판 부착 필수</strong>.<br><br>LED도 이 바이패스 경로에 연결되어 활성화 시 점등 → <strong>셀 충전 완료 상태 시각 표시</strong>.`},
+  {num:'5 / 5', title:'셀 밸런싱 — 3S 시스템 통합 동작', body:`3개의 1S 보호 회로가 직렬 배터리 팩 각 셀에 <strong>병렬로</strong> 연결됩니다.<br><br><strong>패시브 셀 밸런싱 과정:</strong><br>① 셀1이 먼저 4.2V 도달 → 셀1 바이패스 활성화<br>② 충전 전류는 셀2·셀3으로만 계속 공급<br>③ 셀2 도달 → 셀2 바이패스 활성화<br>④ 셀3 도달 → 셀3 바이패스 활성화<br>⑤ 3셀 전부 4.2V = 팩 만충 완료<br><br>이 과정으로 셀 간 전압 불균형(imbalance)이 자동 해소됩니다. 단, 잉여 에너지를 열로 버리는 <strong>패시브 방식</strong>이므로 효율은 액티브 방식보다 낮습니다.`}
+];
+let curStep = 0;
+
+function renderStep() {
+  const s = steps[curStep];
+  document.getElementById('step-card').innerHTML = '<div class="step-num">단계 '+s.num+'</div><div class="step-title">'+s.title+'</div><div class="step-body">'+s.body+'</div>';
+  document.getElementById('step-counter').textContent = (curStep+1)+' / '+steps.length;
+  const nav = document.getElementById('step-nav');
+  nav.innerHTML = steps.map((_,i) => '<div class="step-dot'+(i===curStep?' active':'')+'" onclick="goStep('+i+')"></div>').join('');
+}
+function nextStep(){if(curStep<steps.length-1){curStep++;renderStep();}}
+function prevStep(){if(curStep>0){curStep--;renderStep();}}
+function goStep(i){curStep=i;renderStep();}
+renderStep();
+
+function switchTab(id, el) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
